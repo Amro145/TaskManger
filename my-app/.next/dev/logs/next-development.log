@@ -1,0 +1,5 @@
+[00:04:11.979] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/home/nasor/Programming/TASK/Task-client/my-app/app'
+[00:04:12.004] Server  ERROR   ⨯ "unhandledRejection:" Error: ENOENT: no such file or directory, scandir '/home/nasor/Programming/TASK/Task-client/my-app/app'
+[00:04:12.017] Server  ERROR   ⨯ "unhandledRejection: " Error: ENOENT: no such file or directory, scandir '/home/nasor/Programming/TASK/Task-client/my-app/app'
+[00:04:12.283] Server  ERROR   ⨯ PageNotFoundError: Cannot find module for page: route not found /_not-found/page
+[00:04:15.290] Server  LOG     ○ Compiling /_error ...
