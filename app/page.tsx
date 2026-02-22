@@ -2,8 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { LogOut, Plus, Trash2, CheckCircle2, Circle, Clock, Loader2, LayoutDashboard } from 'lucide-react';
+import { LogOut, Plus, Trash2, CheckCircle2, Circle, Clock, Loader2, LayoutDashboard, User } from 'lucide-react';
 import api from '../utils/api';
+
+interface UserProfile {
+  name: string;
+  email: string;
+}
 
 interface Task {
   _id: string;
@@ -20,10 +25,27 @@ export default function Home() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [adding, setAdding] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    fetchTasks();
+    fetchInitialData();
   }, []);
+
+  const fetchInitialData = async () => {
+    try {
+      // Fetch user profile
+      const userRes = await api.get('/users/me');
+      setUser(userRes.data);
+      // Fetch tasks
+      await fetchTasks();
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        router.push('/signin');
+      }
+    }
+  };
 
   const fetchTasks = async () => {
     try {
@@ -84,14 +106,23 @@ export default function Home() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure?")) return;
+  const handleDeleteRequest = (id: string) => {
+    const task = tasks.find(t => t._id === id);
+    if (task) setTaskToDelete(task);
+  };
+
+  const executeDelete = async () => {
+    if (!taskToDelete) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/DeleteTask/${id}`);
-      setTasks(tasks.filter(t => t._id !== id));
+      await api.delete(`/DeleteTask/${taskToDelete._id}`);
+      setTasks(tasks.filter(t => t._id !== taskToDelete._id));
       toast.success("Task deleted");
+      setTaskToDelete(null);
     } catch {
       toast.error("Failed to delete task");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -117,17 +148,55 @@ export default function Home() {
             </div>
             <h1 className="text-xl font-bold bg-linear-to-r from-white to-neutral-400 bg-clip-text text-transparent">Tasks</h1>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 text-neutral-300 hover:text-white transition-all text-sm font-medium"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign out
-          </button>
+          <div className="flex items-center gap-4">
+            {user && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-800/40 border border-white/5">
+                <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-indigo-400" />
+                </div>
+                <span className="text-sm font-medium text-neutral-300">{user.name}</span>
+              </div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-800 text-neutral-300 hover:text-white transition-all text-sm font-medium"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign out
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 mt-8 space-y-12">
+        {/* Delete Confirmation Modal */}
+        {taskToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl scale-100 transition-all duration-300">
+              <h3 className="text-xl font-semibold text-white mb-2">Delete Task</h3>
+              <p className="text-neutral-400 mb-6 leading-relaxed">
+                Are you sure you want to delete <span className="text-white font-medium">"{taskToDelete.title}"</span>? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setTaskToDelete(null)}
+                  disabled={isDeleting}
+                  className="px-4 py-2 rounded-xl bg-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors disabled:opacity-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={executeDelete}
+                  disabled={isDeleting}
+                  className="px-4 py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center min-w-[80px] disabled:opacity-50 font-medium"
+                >
+                  {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Create Task Form */}
         <section className="bg-neutral-900/50 border border-white/5 rounded-2xl p-6 shadow-2xl">
           <h2 className="text-lg font-semibold mb-4 text-neutral-200">Create New Task</h2>
@@ -173,7 +242,7 @@ export default function Home() {
             ) : (
               <div className="space-y-3">
                 {uncompletedTasks.map(task => (
-                  <TaskCard key={task._id} task={task} onStatusChange={handleUpdateStatus} onDelete={handleDelete} />
+                  <TaskCard key={task._id} task={task} onStatusChange={handleUpdateStatus} onDelete={handleDeleteRequest} />
                 ))}
               </div>
             )}
@@ -192,7 +261,7 @@ export default function Home() {
             ) : (
               <div className="space-y-3">
                 {completedTasks.map(task => (
-                  <TaskCard key={task._id} task={task} onStatusChange={handleUpdateStatus} onDelete={handleDelete} />
+                  <TaskCard key={task._id} task={task} onStatusChange={handleUpdateStatus} onDelete={handleDeleteRequest} />
                 ))}
               </div>
             )}
