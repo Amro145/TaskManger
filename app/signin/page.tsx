@@ -16,11 +16,24 @@ export default function SigninPage() {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await api.post('/users/signin', { email, password });
+            await api.post('/users/signin', { email, password });
             toast.success("Welcome back!");
             router.push('/');
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to sign in");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleGuestSignin = async () => {
+        setLoading(true);
+        try {
+            await api.post('/users/signin', { email: 'guest@gmail.com', password: 'guest@gmail.com' });
+            toast.success("Welcome, Guest!");
+            router.push('/');
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to sign in as guest");
         } finally {
             setLoading(false);
         }
@@ -67,6 +80,16 @@ export default function SigninPage() {
                     >
                         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5" />}
                         {loading ? 'Signing in...' : 'Sign in'}
+                    </button>
+                    {/* Todo login as Guest  with email:guest@gmail.com and password:guest@gmail.com*/}
+                    <button
+                        type="button"
+                        disabled={loading}
+                        onClick={handleGuestSignin}
+                        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5" />}
+                        {loading ? 'Logging in as Guest...' : 'Login as Guest'}
                     </button>
 
                     <p className="text-center text-sm text-neutral-400">
