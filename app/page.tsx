@@ -175,7 +175,7 @@ export default function Home() {
             <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl scale-100 transition-all duration-300">
               <h3 className="text-xl font-semibold text-white mb-2">Delete Task</h3>
               <p className="text-neutral-400 mb-6 leading-relaxed">
-                Are you sure you want to delete <span className="text-white font-medium">"{taskToDelete.title}"</span>? This action cannot be undone.
+                Are you sure you want to delete <span className="text-white font-medium">&quot;{taskToDelete.title}&quot;</span>? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-end">
                 <button
