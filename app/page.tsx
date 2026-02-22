@@ -115,7 +115,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
               <LayoutDashboard className="w-6 h-6 text-indigo-500" />
             </div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">Tasks</h1>
+            <h1 className="text-xl font-bold bg-linear-to-r from-white to-neutral-400 bg-clip-text text-transparent">Tasks</h1>
           </div>
           <button
             onClick={handleLogout}
