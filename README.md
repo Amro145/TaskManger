@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ Task Manager Frontend Client 
 
-## Getting Started
+A stunning, ultra-modern Next.js application tailored for seamless Task Management. Built strictly with performance and aesthetic dominance in mind: utilizing rich Tailwind glassmorphism interfaces, smooth asynchronous interactions, and complete backend REST API integration.
 
-First, run the development server:
+## ✨ Features
+- **Next.js App Router:** High performance, rapid component routing.
+- **Glassmorphism UI:** Sophisticated dark mode aesthetics using native Tailwind styling.
+- **Real-time UX:** Optimistic UI state updates powered by React Hot Toast for instant feedback.
+- **Guest Access:** Built-in dynamic 1-click authentication test portals.
+- **Beautiful Modals:** Custom Tailwind-designed confirmation dialogs protecting against destructive actions. 
 
+## 🛠️ Technology Stack
+- **Next.js** - React Framework 
+- **Tailwind CSS** - Rapid utility-first rendering and sleek styling
+- **Axios** - Intercepted HTTP Client configured for secure cookie transactions
+- **Lucide React** - Brilliant, lightweight SVG iconography
+- **React Hot Toast** - Elegant, dark-styled application notifications
+
+---
+
+## 🚦 Getting Started
+
+### 1. Installation
+Navigate to your client directory and prepare dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd Task-client
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Variables
+If testing against a local backend, you can modify `baseURL` inside `utils/api.ts`. By default, it routes to your Vercel production string:
+```typescript
+import axios from 'axios';
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+const api = axios.create({
+    baseURL: 'https://task-backend-jade.vercel.app/api',
+    withCredentials: true,
+});
+export default api;
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Start Development Server
+Boot up your Next.js frontend engine:
+```bash
+npm run dev
+```
+Open `http://localhost:3000` to view the application locally.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🏗️ Core Application Interface
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### `app/page.tsx` (The Dashboard)
+The brain of the application. It gracefully fetches your data, isolates **Active** tasks from visually-dimmed **Completed** ones, and hosts beautiful UI handlers allowing you to shift items into `in-progress` states or execute them into the bin.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `app/signin` & `app/signup` 
+Full-screen radial gradients enveloping glass pane authorization cards. Securely routes JSON packets seamlessly and drops the `HttpOnly` token safely into your browser without any flicker.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deployment (Vercel)
+Because this sits on standard Next.js paradigms, deploying to Vercel takes 30 seconds.
+1. Add the Git Repository to Vercel.
+2. Ensure the Framework Preset is explicitly designated as `Next.js`.
+3. Hit Deploy. The server builds statically automatically!
