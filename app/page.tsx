@@ -41,9 +41,7 @@ export default function Home() {
       // Fetch tasks
       await fetchTasks();
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        router.push('/signin');
-      }
+      router.push('/signin');
     }
   };
 
@@ -66,7 +64,8 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      await api.get('/users/logout');
+      await api.post('/users/logout');
+      setUser(null);
       toast.success("Logged out");
       router.push('/signin');
     } catch {

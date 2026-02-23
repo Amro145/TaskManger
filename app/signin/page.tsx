@@ -12,6 +12,14 @@ export default function SigninPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    React.useEffect(() => {
+        api.get('/users/me').then(() => {
+            router.push('/');
+        }).catch(() => {
+            // Not authenticated, do nothing
+        });
+    }, [router]);
+
     const handleSignin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);

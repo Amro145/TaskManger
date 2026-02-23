@@ -13,6 +13,14 @@ export default function SignupPage() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    React.useEffect(() => {
+        api.get('/users/me').then(() => {
+            router.push('/');
+        }).catch(() => {
+            // Not authenticated, do nothing
+        });
+    }, [router]);
+
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
